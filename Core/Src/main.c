@@ -18,9 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stm32g4xx.h"
-#include "stm32g4xx_hal_def.h"
-#include "stm32g4xx_hal_fdcan.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -52,9 +49,6 @@ TIM_HandleTypeDef htim6;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
-FDCAN_HandleTypeDef TxHeader;
-FDCAN_HandleTypeDef RxHeader;
 
 /* USER CODE END PV */
 

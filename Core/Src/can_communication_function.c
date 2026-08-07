@@ -1,3 +1,7 @@
+#include "main.h"
+#include "stm32g4xx.h"
+#include "stm32g4xx_hal_def.h"
+#include "stm32g4xx_hal_fdcan.h"
 #include "can_communication_function.h"
 
 
