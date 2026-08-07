@@ -66,6 +66,12 @@ static void MX_USART2_UART_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+int write(int file, char *ptr, int len) {
+
+  HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, 10);  //printfを使えるにした
+  return len;
+
+}
 
 /* USER CODE END 0 */
 
