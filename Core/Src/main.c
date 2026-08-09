@@ -21,8 +21,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdint.h>
 #include <stdio.h>
 #include "can_communication_function.h"
+#include "stm32g4xx_hal.h"
+#include "stm32g4xx_hal_fdcan.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -109,13 +112,41 @@ int main(void)
   MX_TIM6_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  HAL_FDCAN_Start(&hfdcan3);
+  HAL_FDCAN_ActivateNotification(&hfdcan3,FDCAN_IT_RX_FIFO0_NEW_MESSAGE,0);
 
+  if (HAL_FDCAN_Start(&hfdcan3) != HAL_OK)
+{
+  Error_Handler();
+}
+
+FDCAN_TxHeaderTypeDef TxHeader;
+
+TxHeader.Identifier          = 0x200;
+TxHeader.IdType              = FDCAN_STANDARD_ID;
+TxHeader.TxFrameType         = FDCAN_DATA_FRAME;
+TxHeader.DataLength          = FDCAN_DLC_BYTES_8;
+TxHeader.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
+TxHeader.BitRateSwitch       = FDCAN_BRS_OFF;
+TxHeader.FDFormat            = FDCAN_CLASSIC_CAN;
+TxHeader.TxEventFifoControl  = FDCAN_NO_TX_EVENTS;
+TxHeader.MessageMarker       = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    int value_to_robomasu = 1000;
+    uint8_t TxData[8] = {};
+    TxData[0] = value_to_robomasu >> 8;
+    TxData[1] = (uint8_t)(value_to_robomasu & 0xff);
+    if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan3,&TxHeader,TxData) !=HAL_OK){
+      printf("addmessage is error\r\n");
+      Error_Handler();
+    }
+    HAL_Delay(1000);
+    printf("%d\r\n", value_to_robomasu);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
