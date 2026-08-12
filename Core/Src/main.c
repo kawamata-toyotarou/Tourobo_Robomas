@@ -69,7 +69,7 @@ static void MX_USART2_UART_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-int write(int file, char *ptr, int len) {
+int _write(int file, char *ptr, int len) {
 
   HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, 10);  //printfを使えるにした
   return len;
@@ -112,7 +112,24 @@ int main(void)
   MX_TIM6_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  HAL_FDCAN_Start(&hfdcan3);
+
+  FDCAN_FilterTypeDef FDCAN_Filter_settings;
+  FDCAN_Filter_settings.IdType       = FDCAN_STANDARD_ID;
+  FDCAN_Filter_settings.FilterIndex  = 0;                     // StdFiltersNbr=1に合わせて0
+  FDCAN_Filter_settings.FilterType   = FDCAN_FILTER_RANGE;
+  FDCAN_Filter_settings.FilterConfig = FDCAN_FILTER_TO_RXFIFO0; // FIFO0
+  FDCAN_Filter_settings.FilterID1    = 0x201;
+  FDCAN_Filter_settings.FilterID2    = 0x204;                 
+
+  if (HAL_FDCAN_ConfigFilter(&hfdcan3, &FDCAN_Filter_settings) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  // フィルタに一致しないフレームは破棄
+  HAL_FDCAN_ConfigGlobalFilter(&hfdcan3, FDCAN_REJECT, FDCAN_REJECT,
+                              FDCAN_REJECT_REMOTE, FDCAN_REJECT_REMOTE);
+
   HAL_FDCAN_ActivateNotification(&hfdcan3,FDCAN_IT_RX_FIFO0_NEW_MESSAGE,0);
 
   if (HAL_FDCAN_Start(&hfdcan3) != HAL_OK)
@@ -137,16 +154,16 @@ TxHeader.MessageMarker       = 0;
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    int value_to_robomasu = 1000;
+    int value_to_robomasu = 2000;
     uint8_t TxData[8] = {};
-    TxData[0] = value_to_robomasu >> 8;
-    TxData[1] = (uint8_t)(value_to_robomasu & 0xff);
+    TxData[2] = value_to_robomasu >> 8;
+    TxData[3] = (uint8_t)(value_to_robomasu & 0xff);
     if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan3,&TxHeader,TxData) !=HAL_OK){
       printf("addmessage is error\r\n");
       Error_Handler();
     }
-    HAL_Delay(1000);
-    printf("%d\r\n", value_to_robomasu);
+    HAL_Delay(10);
+    //printf("%d\r\n", value_to_robomasu);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

@@ -18,7 +18,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
       Error_Handler();
     }
 
-    if (RxHeader.Identifier == 0x201) {
+    if (RxHeader.Identifier == 0x202) {
       robomasu_speed_rpm = (int16_t)((RxData[2] << 8) | RxData[3]);
     }
 
