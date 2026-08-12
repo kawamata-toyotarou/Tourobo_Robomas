@@ -4,7 +4,9 @@
 #include "stm32g4xx_hal_fdcan.h"
 #include "can_communication_function.h"
 
-volatile int16_t robomasu_speed_rpm = 0;
+volatile int16_t robomasu_speed_rpm;
+volatile float raw_angle_data;
+
 
 /*受信コールバック関数*/
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs) {
@@ -19,6 +21,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
     }
 
     if (RxHeader.Identifier == 0x202) {
+      raw_angle_data = (uint16_t)((RxData[0] << 8) | RxData[1]);
       robomasu_speed_rpm = (int16_t)((RxData[2] << 8) | RxData[3]);
     }
 

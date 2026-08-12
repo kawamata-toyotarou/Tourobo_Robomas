@@ -26,6 +26,7 @@
 #include "can_communication_function.h"
 #include "stm32g4xx_hal.h"
 #include "stm32g4xx_hal_fdcan.h"
+#include "timer_function.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -95,7 +96,9 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+  robomasu_speed_rpm = 0;
+  raw_angle_data = 0;
+  angle = 0;
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -154,7 +157,7 @@ TxHeader.MessageMarker       = 0;
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    int value_to_robomasu = 2000;
+    int value_to_robomasu = 1500;  //2000以上で一回転する
     uint8_t TxData[8] = {};
     TxData[2] = value_to_robomasu >> 8;
     TxData[3] = (uint8_t)(value_to_robomasu & 0xff);
