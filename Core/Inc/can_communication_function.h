@@ -7,11 +7,14 @@
  
 extern FDCAN_HandleTypeDef hfdcan1;
 extern FDCAN_HandleTypeDef hfdcan3;
+extern TIM_HandleTypeDef htim6;   
 extern volatile int16_t robomasu_speed_rpm;
 extern volatile float raw_angle_data;
 extern volatile float last_time_raw_angle_data;
 extern volatile float rotate_total_angle;
 extern volatile float last_time_rotate_total_angle;
+extern volatile int send_current;
+extern FDCAN_TxHeaderTypeDef TxHeader;
 
 void update_total_angle(void);
 /*受信コールバック関数*/

@@ -20,9 +20,12 @@ typedef struct {
     float speed_last_time_difference;
 } Motor;
 
+#define MAX_SPEED_RPM 2000.0f
+
 extern Motor motor;
 extern FDCAN_HandleTypeDef hfdcan1;
 extern FDCAN_HandleTypeDef hfdcan3;
+extern FDCAN_TxHeaderTypeDef TxHeader;
 
 extern volatile float angle;
 extern volatile int speed_target;   // 位置ループの出力
@@ -33,6 +36,6 @@ extern volatile int mode;
 
 /*タイマー関数*/
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
-int pid(float current_number, float target_number, float p_gain, float i_gain, float d_gain,float *difference_sum, float *low_pass_difference, float gravity, int cutoff,float *last_time_difference, int motor_index);
+int pid(float current_number, float target_number, float p_gain, float i_gain, float d_gain, float *difference_sum, float *low_pass_difference, float gravity, int cutoff, float *last_time_difference);
  
 #endif

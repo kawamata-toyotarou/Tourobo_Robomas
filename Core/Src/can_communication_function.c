@@ -33,7 +33,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
     uint8_t RxData[8];
 
     if (HAL_FDCAN_GetRxMessage(hfdcan, FDCAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK) {
-      Error_Handler();
+      
     }
 
     if (RxHeader.Identifier == 0x202) {
@@ -41,6 +41,11 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
       robomasu_speed_rpm = (int16_t)((RxData[2] << 8) | RxData[3]);
       update_total_angle(); 
     }
+
+    uint8_t TxData[8] = {0};
+    TxData[2] = send_current >> 8;
+    TxData[3] = (uint8_t)(send_current & 0xff);
+    HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan3, &TxHeader, TxData);
 
   }
 }

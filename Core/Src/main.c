@@ -53,7 +53,7 @@ TIM_HandleTypeDef htim6;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+FDCAN_TxHeaderTypeDef TxHeader;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -96,7 +96,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-    robomasu_speed_rpm = 0;
+  robomasu_speed_rpm = 0;
   raw_angle_data = 0;
   last_time_raw_angle_data = 0;
   rotate_total_angle = 0;
@@ -105,13 +105,13 @@ int main(void)
   speed_target = 0;
   send_current = 0;
 
-  motor.Kp = 5.0f;   motor.Ki = 0.0f;   motor.Kd = 0.1f;
+  motor.Kp = 1.0f;   motor.Ki = 0.0f;   motor.Kd = 0.1f;
   motor.angle_total_difference = 0;
   motor.angle_lowpass_difference = 0;
   motor.angle_last_time_difference = 0;
-  motor.angle_target = 0;
+  motor.angle_target = 90;
 
-  motor.speed_Kp = 10.0f; motor.speed_Ki = 0.5f; motor.speed_Kd = 0.0f;
+  motor.speed_Kp = 10.0f; motor.speed_Ki = 6.0f; motor.speed_Kd = 5.0f;
   motor.speed_total_difference = 0;
   motor.speed_lowpass_difference = 0;
   motor.speed_last_time_difference = 0;
@@ -152,36 +152,39 @@ int main(void)
   HAL_FDCAN_ActivateNotification(&hfdcan3,FDCAN_IT_RX_FIFO0_NEW_MESSAGE,0);
 
   if (HAL_FDCAN_Start(&hfdcan3) != HAL_OK)
-{
-  Error_Handler();
-}
+  {
+    Error_Handler();
+  }
 
-FDCAN_TxHeaderTypeDef TxHeader;
+  if (HAL_TIM_Base_Start_IT(&htim6) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
-TxHeader.Identifier          = 0x200;
-TxHeader.IdType              = FDCAN_STANDARD_ID;
-TxHeader.TxFrameType         = FDCAN_DATA_FRAME;
-TxHeader.DataLength          = FDCAN_DLC_BYTES_8;
-TxHeader.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
-TxHeader.BitRateSwitch       = FDCAN_BRS_OFF;
-TxHeader.FDFormat            = FDCAN_CLASSIC_CAN;
-TxHeader.TxEventFifoControl  = FDCAN_NO_TX_EVENTS;
-TxHeader.MessageMarker       = 0;
+  TxHeader.Identifier          = 0x200;
+  TxHeader.IdType              = FDCAN_STANDARD_ID;
+  TxHeader.TxFrameType         = FDCAN_DATA_FRAME;
+  TxHeader.DataLength          = FDCAN_DLC_BYTES_8;
+  TxHeader.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
+  TxHeader.BitRateSwitch       = FDCAN_BRS_OFF;
+  TxHeader.FDFormat            = FDCAN_CLASSIC_CAN;
+  TxHeader.TxEventFifoControl  = FDCAN_NO_TX_EVENTS;
+  TxHeader.MessageMarker       = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    int value_to_robomasu = 1500;  //2000以上で一回転する
-    uint8_t TxData[8] = {};
-    TxData[2] = value_to_robomasu >> 8;
-    TxData[3] = (uint8_t)(value_to_robomasu & 0xff);
-    if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan3,&TxHeader,TxData) !=HAL_OK){
-      printf("addmessage is error\r\n");
-      Error_Handler();
-    }
-    HAL_Delay(10);
+    // int value_to_robomasu = 1500;  //2000以上で一回転する
+    // uint8_t TxData[8] = {};
+    // TxData[2] = value_to_robomasu >> 8;
+    // TxData[3] = (uint8_t)(value_to_robomasu & 0xff);
+    // if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan3,&TxHeader,TxData) !=HAL_OK){
+    //   printf("addmessage is error\r\n");
+    //   Error_Handler();
+    // }
+    // HAL_Delay(10);
     //printf("%d\r\n", value_to_robomasu);
     /* USER CODE END WHILE */
 

@@ -52,6 +52,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
                           &motor.angle_total_difference, &motor.angle_lowpass_difference,
                           gravity, cutoff, &motor.angle_last_time_difference);
 
+      if (speed_target > MAX_SPEED_RPM) {
+        speed_target = MAX_SPEED_RPM;
+      } else if (speed_target < -MAX_SPEED_RPM) {
+        speed_target = -MAX_SPEED_RPM;
+      }
+
       send_current = pid(robomasu_speed_rpm, (float)speed_target,
                           motor.speed_Kp, motor.speed_Ki, motor.speed_Kd,
                           &motor.speed_total_difference, &motor.speed_lowpass_difference,
