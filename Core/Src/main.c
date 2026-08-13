@@ -96,9 +96,25 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  robomasu_speed_rpm = 0;
+    robomasu_speed_rpm = 0;
   raw_angle_data = 0;
+  last_time_raw_angle_data = 0;
+  rotate_total_angle = 0;
+  last_time_rotate_total_angle = 0;
   angle = 0;
+  speed_target = 0;
+  send_current = 0;
+
+  motor.Kp = 5.0f;   motor.Ki = 0.0f;   motor.Kd = 0.1f;
+  motor.angle_total_difference = 0;
+  motor.angle_lowpass_difference = 0;
+  motor.angle_last_time_difference = 0;
+  motor.angle_target = 0;
+
+  motor.speed_Kp = 10.0f; motor.speed_Ki = 0.5f; motor.speed_Kd = 0.0f;
+  motor.speed_total_difference = 0;
+  motor.speed_lowpass_difference = 0;
+  motor.speed_last_time_difference = 0;
   /* USER CODE END Init */
 
   /* Configure the system clock */
